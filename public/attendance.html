@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance - MCD Inter College</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .top-bar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .page-title {
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .stats-card {
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .stats-card h3 {
+            font-size: 36px;
+            margin: 0;
+        }
+        .stats-card p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+        }
+        .bg-success-custom { background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%); }
+        .bg-danger-custom { background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%); }
+        .bg-warning-custom { background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%); }
+        .bg-info-custom { background: linear-gradient(135deg, #36b9cc 0%, #258391 100%); }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="page-title">
+                <i class="fas fa-user-check me-2"></i>Student Attendance Management
+            </div>
+            <div>
+                <a href="/admin/dashboard" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4">
+        <!-- Filter Section -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0"><i class="fas fa-filter me-2"></i>Select Class & Date</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" id="attendanceDate">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Class</label>
+                        <select class="form-select" id="classSelect">
+                            <option value="">Select Class</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Section</label>
+                        <select class="form-select" id="sectionSelect">
+                            <option value="">Select Section</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-primary w-100" id="loadStudentsBtn">
+                            <i class="fas fa-search me-1"></i> Load Students
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="row" id="statsSection" style="display: none;">
+            <div class="col-md-3">
+                <div class="stats-card bg-success-custom">
+                    <h3 id="presentCount">0</h3>
+                    <p>Present</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card bg-danger-custom">
+                    <h3 id="absentCount">0</h3>
+                    <p>Absent</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card bg-warning-custom">
+                    <h3 id="lateCount">0</h3>
+                    <p>Late</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card bg-info-custom">
+                    <h3 id="leaveCount">0</h3>
+                    <p>On Leave</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students List -->
+        <div class="card shadow" id="studentsCard" style="display: none;">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-users me-2"></i>Students List</h6>
+                    <div>
+                        <button class="btn btn-sm btn-success me-2" id="markAllPresentBtn">
+                            <i class="fas fa-check-double me-1"></i>Mark All Present
+                        </button>
+                        <button class="btn btn-sm btn-primary" id="saveAllBtn">
+                            <i class="fas fa-save me-1"></i>Save Attendance
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="studentsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="80">Roll No</th>
+                                <th>Student Name</th>
+                                <th width="150">Status</th>
+                                <th width="120">Check-in Time</th>
+                                <th width="200">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    Select class and section to load students
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        let studentsData = [];
+        
+        // Set today's date
+        document.getElementById('attendanceDate').valueAsDate = new Date();
+
+        $(document).ready(function() {
+            // Setup CSRF token
+            const token = getCookie('XSRF-TOKEN');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': token
+                }
+            });
+
+            loadClasses();
+            
+            $('#classSelect').change(function() {
+                const classId = $(this).val();
+                $('#sectionSelect').html('<option value="">Select Section</option>');
+                if (classId) {
+                    loadSections(classId);
+                }
+            });
+            
+            $('#loadStudentsBtn').click(function() {
+                loadStudents();
+            });
+            
+            $('#markAllPresentBtn').click(function() {
+                $('.attendance-status').val('Present');
+                updateStats();
+            });
+            
+            $('#saveAllBtn').click(function() {
+                saveAttendance();
+            });
+        });
+        
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function loadClasses() {
+            $.get('/admin/get-active-classes', function(response) {
+                let options = '<option value="">Select Class</option>';
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(cls => {
+                        options += `<option value="${cls.id}">${cls.class_name}</option>`;
+                    });
+                }
+                $('#classSelect').html(options);
+            }).fail(function() {
+                Swal.fire('Error', 'Failed to load classes', 'error');
+            });
+        }
+
+        function loadSections(classId) {
+            $.get(`/admin/get-sections/${classId}`, function(response) {
+                let options = '<option value="">Select Section</option>';
+                if (response.data && response.data.length > 0) {
+                    response.data.forEach(section => {
+                        options += `<option value="${section.id}">${section.section_name}</option>`;
+                    });
+                }
+                $('#sectionSelect').html(options);
+            }).fail(function() {
+                Swal.fire('Error', 'Failed to load sections', 'error');
+            });
+        }
+
+        function loadStudents() {
+            const date = $('#attendanceDate').val();
+            const classId = $('#classSelect').val();
+            const sectionId = $('#sectionSelect').val();
+            
+            if (!date || !classId || !sectionId) {
+                Swal.fire('Warning', 'Please select date, class and section', 'warning');
+                return;
+            }
+            
+            Swal.fire({
+                title: 'Loading Students...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            
+            $.get('/admin/attendance/students/load', {
+                date: date,
+                class_id: classId,
+                section_id: sectionId
+            }, function(response) {
+                Swal.close();
+                
+                if (response.success && response.students.length > 0) {
+                    studentsData = response.students;
+                    renderStudents();
+                    $('#statsSection, #studentsCard').show();
+                    updateStats();
+                } else {
+                    Swal.fire('Info', 'No students found for selected class and section', 'info');
+                }
+            }).fail(function() {
+                Swal.fire('Error', 'Failed to load students', 'error');
+            });
+        }
+
+        function renderStudents() {
+            let html = '';
+            
+            studentsData.forEach(student => {
+                const now = new Date();
+                const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                
+                html += `
+                    <tr data-student-id="${student.id}">
+                        <td class="text-center">${student.roll_no || 'N/A'}</td>
+                        <td>${student.first_name} ${student.last_name}</td>
+                        <td>
+                            <select class="form-select form-select-sm attendance-status">
+                                <option value="Present">Present</option>
+                                <option value="Absent">Absent</option>
+                                <option value="Late">Late</option>
+                                <option value="Half Day">Half Day</option>
+                                <option value="On Leave">On Leave</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="time" class="form-control form-control-sm check-in-time" value="${timeStr}">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm remarks" placeholder="Optional remarks">
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            $('#studentsTableBody').html(html);
+            
+            $('.attendance-status').change(updateStats);
+        }
+
+        function updateStats() {
+            let present = 0, absent = 0, late = 0, leave = 0;
+            
+            $('.attendance-status').each(function() {
+                const status = $(this).val();
+                if (status === 'Present') present++;
+                else if (status === 'Absent') absent++;
+                else if (status === 'Late') late++;
+                else if (status === 'On Leave') leave++;
+            });
+            
+            $('#presentCount').text(present);
+            $('#absentCount').text(absent);
+            $('#lateCount').text(late);
+            $('#leaveCount').text(leave);
+        }
+
+        function saveAttendance() {
+            const date = $('#attendanceDate').val();
+            const classId = $('#classSelect').val();
+            const sectionId = $('#sectionSelect').val();
+            let attendanceData = [];
+            
+            $('tr[data-student-id]').each(function() {
+                attendanceData.push({
+                    student_id: $(this).data('student-id'),
+                    status: $(this).find('.attendance-status').val(),
+                    check_in_time: $(this).find('.check-in-time').val(),
+                    remarks: $(this).find('.remarks').val()
+                });
+            });
+            
+            if (attendanceData.length === 0) {
+                Swal.fire('Warning', 'No students to save', 'warning');
+                return;
+            }
+            
+            Swal.fire({
+                title: 'Saving Attendance...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+            
+            $.post('/admin/attendance/students/save', {
+                date: date,
+                class_id: classId,
+                section_id: sectionId,
+                attendance: attendanceData,
+                _token: getCookie('XSRF-TOKEN')
+            }, function(response) {
+                if (response.success) {
+                    Swal.fire('Success!', response.message, 'success');
+                } else {
+                    Swal.fire('Error', 'Failed to save attendance', 'error');
+                }
+            }).fail(function() {
+                Swal.fire('Error', 'Failed to save attendance', 'error');
+            });
+        }
+    </script>
+</body>
+</html>

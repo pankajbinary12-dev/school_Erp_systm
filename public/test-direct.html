@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct HTML Test</title>
+    <style>
+        body {
+            background: #e3f2fd;
+            padding: 50px;
+            font-family: Arial;
+        }
+        .box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 { color: #1976d2; }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #1976d2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+        }
+        .btn:hover { background: #1565c0; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>🔍 Direct HTML Test</h1>
+        <p><strong>This is a plain HTML file in public folder.</strong></p>
+        <p>If you can see this, your browser and server are working fine.</p>
+        
+        <hr>
+        
+        <h3>Test These URLs:</h3>
+        <ol>
+            <li>
+                <strong>This file (working):</strong><br>
+                <code>http://127.0.0.1:8000/test-direct.html</code>
+            </li>
+            <li>
+                <strong>Minimal Laravel view:</strong><br>
+                <a href="http://127.0.0.1:8000/admin/attendance/test-direct" class="btn" target="_blank">
+                    Test Direct Route
+                </a>
+            </li>
+            <li>
+                <strong>Attendance page:</strong><br>
+                <a href="http://127.0.0.1:8000/admin/attendance/student" class="btn" target="_blank">
+                    Open Attendance
+                </a>
+            </li>
+        </ol>
+        
+        <hr>
+        
+        <h3>Browser Console Check:</h3>
+        <p>Press <strong>F12</strong> → Click <strong>Console</strong> tab</p>
+        <p>Look for any red error messages and share screenshot</p>
+        
+        <script>
+            console.log('✅ JavaScript is working!');
+            console.log('Browser:', navigator.userAgent);
+        </script>
+    </div>
+</body>
+</html>
