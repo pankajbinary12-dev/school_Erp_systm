@@ -27,6 +27,41 @@
         background: #f8d7da;
         color: #721c24;
     }
+    
+    .student-photo-thumb {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #ddd;
+    }
+    
+    .student-avatar-thumb {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 16px;
+    }
+    
+    .doc-preview-img {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 5px;
+        border: 2px solid #ddd;
+        margin-top: 5px;
+    }
+    
+    .doc-preview-link {
+        display: inline-block;
+        margin-top: 5px;
+        font-size: 12px;
+    }
 </style>
 @endpush
 
@@ -46,6 +81,7 @@
             <thead class="table-light">
                 <tr>
                     <th>ID</th>
+                    <th>Photo</th>
                     <th>Student Name</th>
                     <th>Email</th>
                     <th>Class</th>
@@ -273,6 +309,43 @@
                         </div>
                     </div>
 
+                    <!-- Documents & Photos -->
+                    <div class="mb-4">
+                        <h6 class="text-primary border-bottom pb-2"><i class="fas fa-images me-2"></i>Documents & Photos</h6>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Student Photo</label>
+                                <input type="file" class="form-control" name="student_photo" id="edit_student_photo" accept="image/*">
+                                <div id="current_student_photo_preview" class="mt-2"></div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Father Photo</label>
+                                <input type="file" class="form-control" name="father_photo" id="edit_father_photo" accept="image/*">
+                                <div id="current_father_photo_preview" class="mt-2"></div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Mother Photo</label>
+                                <input type="file" class="form-control" name="mother_photo" id="edit_mother_photo" accept="image/*">
+                                <div id="current_mother_photo_preview" class="mt-2"></div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Birth Certificate</label>
+                                <input type="file" class="form-control" name="birth_certificate" id="edit_birth_certificate" accept="image/*,application/pdf">
+                                <div id="current_birth_certificate_preview" class="mt-2"></div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Aadhar Card (Front)</label>
+                                <input type="file" class="form-control" name="aadhar_card_front" id="edit_aadhar_card_front" accept="image/*,application/pdf">
+                                <div id="current_aadhar_front_preview" class="mt-2"></div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Aadhar Card (Back)</label>
+                                <input type="file" class="form-control" name="aadhar_card_back" id="edit_aadhar_card_back" accept="image/*,application/pdf">
+                                <div id="current_aadhar_back_preview" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Status -->
                     <div class="mb-3">
                         <div class="form-check">
@@ -312,6 +385,18 @@ $(document).ready(function() {
         },
         columns: [
             { data: 'id' },
+            { 
+                data: 'student_photo',
+                orderable: false,
+                render: function(data, type, row) {
+                    if (data) {
+                        return `<img src="/storage/${data}" alt="${row.student_name}" class="student-photo-thumb">`;
+                    } else {
+                        const initial = row.student_name.charAt(0).toUpperCase();
+                        return `<div class="student-avatar-thumb">${initial}</div>`;
+                    }
+                }
+            },
             { data: 'student_name' },
             { data: 'student_email' },
             { 
@@ -381,7 +466,7 @@ $(document).ready(function() {
                     // Fill form fields
                     $('#edit_admission_id').val(data.id);
                     $('#edit_student_name').val(data.student_name);
-                    $('#edit_dob').val(data.dob);
+                    $('#edit_dob').val(data.dob ? data.dob.split('T')[0] : '');
                     $('#edit_gender').val(data.gender);
                     $('#edit_student_email').val(data.student_email);
                     $('#edit_blood_group').val(data.blood_group);
@@ -391,7 +476,7 @@ $(document).ready(function() {
                     $('#edit_phone').val(data.phone);
                     $('#edit_class_id').val(data.class_id);
                     $('#edit_section_id').val(data.section_id);
-                    $('#edit_admission_date').val(data.admission_date);
+                    $('#edit_admission_date').val(data.admission_date ? data.admission_date.split('T')[0] : '');
                     $('#edit_previous_school').val(data.previous_school);
                     $('#edit_tc_number').val(data.tc_number);
                     $('#edit_stu_address').val(data.stu_address);

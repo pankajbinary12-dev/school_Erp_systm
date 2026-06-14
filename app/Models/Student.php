@@ -30,7 +30,9 @@ class Student extends Authenticatable
         'password',
         'photo',
         'status',
-        'admission_date'
+        'admission_date',
+        'blood_group',
+        'notification_settings'
     ];
 
     protected $hidden = [
@@ -41,6 +43,8 @@ class Student extends Authenticatable
         'date_of_birth' => 'date',
         'admission_date' => 'date',
     ];
+
+    protected $appends = ['name', 'full_name'];
 
     public function class()
     {
@@ -60,5 +64,11 @@ class Student extends Authenticatable
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    // Accessor for name (maps to full_name)
+    public function getNameAttribute()
+    {
+        return $this->full_name;
     }
 }

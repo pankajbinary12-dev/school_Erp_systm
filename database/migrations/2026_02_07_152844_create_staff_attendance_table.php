@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('staff_attendance', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+          $table->id();
+          $table->unsignedBigInteger('staff_id');
+          $table->date('attendance_date');
+          $table->enum('status', ['Present', 'Absent', 'Half Day', 'Late', 'On Leave'])->default('Present');
+          $table->time('check_in')->nullable();
+          $table->time('check_out')->nullable();
+          $table->text('remarks')->nullable();
+          $table->timestamps();
         });
     }
 

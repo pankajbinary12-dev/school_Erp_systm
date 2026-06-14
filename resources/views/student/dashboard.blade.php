@@ -1,221 +1,221 @@
-@extends('layouts.student')
+@extends('student.layout')
 
-@section('title', 'Student Dashboard')
+@section('title', 'Dashboard')
+@section('page-title', 'Dashboard')
 
 @section('content')
-<div class="d-flex">
-    <!-- Sidebar -->
-    <div class="sidebar" style="width: 250px;">
-        <div class="p-3 text-center border-bottom">
-            <i class="fas fa-user-graduate fa-3x text-white mb-2"></i>
-            <h5 class="text-white mb-0">{{ $student->full_name }}</h5>
-            <small class="text-white-50">{{ $student->admission_no }}</small>
+<div class="row">
+    <!-- Stats Cards Row 1 -->
+    <div class="col-md-3 mb-4">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-school"></i>
+            </div>
+            <h6 style="color: #858796; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Class & Section</h6>
+            <h3 style="color: #5a5c69; font-size: 24px; font-weight: 700; margin: 0;">
+                {{ $student->class->class_name ?? 'N/A' }} - {{ $student->section->section_name ?? 'N/A' }}
+            </h3>
         </div>
-        
-        <nav class="nav flex-column mt-3">
-            <a class="nav-link active" href="#"><i class="fas fa-home"></i> Dashboard</a>
-            <a class="nav-link" href="#"><i class="fas fa-user"></i> My Profile</a>
-            <a class="nav-link" href="#"><i class="fas fa-book"></i> My Subjects</a>
-            <a class="nav-link" href="#"><i class="fas fa-calendar-check"></i> Attendance</a>
-            <a class="nav-link" href="#"><i class="fas fa-file-alt"></i> Assignments</a>
-            <a class="nav-link" href="#"><i class="fas fa-chart-line"></i> Results</a>
-            <a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </nav>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content flex-grow-1">
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container-fluid">
-                <h4 class="mb-0">Student Dashboard</h4>
-                <div class="d-flex align-items-center">
-                    <span class="me-3">{{ now()->format('l, F d, Y') }}</span>
-                    <div class="dropdown">
-                        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle"></i> {{ $student->first_name }}
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#" id="logoutBtn2"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
+    <div class="col-md-3 mb-4">
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-alt"></i>
             </div>
-        </nav>
+            <h6 style="color: #858796; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Roll Number</h6>
+            <h3 style="color: #5a5c69; font-size: 24px; font-weight: 700; margin: 0;">
+                {{ $student->roll_no ?? 'N/A' }}
+            </h3>
+        </div>
+    </div>
 
-        <!-- Content -->
-        <div class="container-fluid p-4">
-            <!-- Stats Cards -->
+    <div class="col-md-3 mb-4">
+        <div class="stat-card info">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h6 style="color: #858796; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Monthly Attendance</h6>
+            <h3 style="color: #5a5c69; font-size: 24px; font-weight: 700; margin: 0;">
+                {{ $monthlyPercentage }}%
+            </h3>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h6 style="color: #858796; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Overall Attendance</h6>
+            <h3 style="color: #5a5c69; font-size: 24px; font-weight: 700; margin: 0;">
+                {{ $overallPercentage }}%
+            </h3>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards Row 2 -->
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="stat-card {{ $todayAttendance ? ($todayAttendance->status == 'Present' ? 'success' : 'danger') : 'warning' }}">
+            <div class="stat-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <h6 style="color: #858796; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Today's Status</h6>
+            <h3 style="color: #5a5c69; font-size: 20px; font-weight: 700; margin: 0;">
+                {{ $todayAttendance ? $todayAttendance->status : 'Not Marked' }}
+            </h3>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="stat-card {{ $dueFee > 0 ? 'danger' : 'success' }}">
+            <div class="stat-icon">
+                <i class="fas fa-rupee-sign"></i>
+            </div>
+            <h6 style="color: #858796; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Fees Due</h6>
+            <h3 style="color: #5a5c69; font-size: 24px; font-weight: 700; margin: 0;">
+                ₹{{ number_format($dueFee, 0) }}
+            </h3>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="stat-card primary">
+            <div class="stat-icon">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <h6 style="color: #858796; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Pending Assignments</h6>
+            <h3 style="color: #5a5c69; font-size: 24px; font-weight: 700; margin: 0;">
+                {{ $pendingAssignments }}
+            </h3>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="stat-card info">
+            <div class="stat-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <h6 style="color: #858796; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px;">Notifications</h6>
+            <h3 style="color: #5a5c69; font-size: 24px; font-weight: 700; margin: 0;">
+                {{ $unreadNotifications }}
+            </h3>
+        </div>
+    </div>
+</div>
+
+<!-- Latest Result & Recent Notifications -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="stat-card primary" style="height: 100%;">
+            <h5 style="color: #5a5c69; font-weight: 700; margin-bottom: 20px;">
+                <i class="fas fa-trophy me-2"></i>Latest Result
+            </h5>
+            @if($latestResult)
+                <div style="background: #f8f9fc; padding: 20px; border-radius: 10px;">
+                    <h6 style="color: #5a5c69; font-weight: 600;">{{ $latestResult->exam->exam_name ?? 'N/A' }}</h6>
+                    <div class="row mt-3">
+                        <div class="col-4">
+                            <small style="color: #858796;">Total Marks</small>
+                            <h4 style="color: #5a5c69; font-weight: 700;">{{ $latestResult->total_marks }}</h4>
+                        </div>
+                        <div class="col-4">
+                            <small style="color: #858796;">Percentage</small>
+                            <h4 style="color: #5a5c69; font-weight: 700;">{{ $latestResult->percentage }}%</h4>
+                        </div>
+                        <div class="col-4">
+                            <small style="color: #858796;">Grade</small>
+                            <h4 style="color: #5a5c69; font-weight: 700;">{{ $latestResult->grade }}</h4>
+                        </div>
+                    </div>
+                    <a href="{{ route('student.results') }}" class="btn btn-sm btn-primary mt-3">
+                        <i class="fas fa-eye me-1"></i>View All Results
+                    </a>
+                </div>
+            @else
+                <div style="text-align: center; padding: 40px; color: #858796;">
+                    <i class="fas fa-trophy" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px;"></i>
+                    <p style="margin: 0;">No results available yet</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="stat-card warning" style="height: 100%;">
+            <h5 style="color: #5a5c69; font-weight: 700; margin-bottom: 20px;">
+                <i class="fas fa-bell me-2"></i>Recent Notifications
+            </h5>
+            @if($recentNotifications->count() > 0)
+                <div style="max-height: 300px; overflow-y: auto;">
+                    @foreach($recentNotifications as $notification)
+                        <div style="background: #f8f9fc; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid 
+                            @if($notification->type == 'success') #1cc88a
+                            @elseif($notification->type == 'warning') #f6c23e
+                            @elseif($notification->type == 'danger') #e74a3b
+                            @else #36b9cc @endif;">
+                            <h6 style="margin: 0; color: #5a5c69; font-size: 14px; font-weight: 600;">
+                                {{ $notification->title }}
+                            </h6>
+                            <small style="color: #858796; font-size: 12px;">
+                                {{ $notification->message }}
+                            </small>
+                            <br>
+                            <small style="color: #858796; font-size: 11px;">
+                                <i class="fas fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}
+                            </small>
+                        </div>
+                    @endforeach
+                </div>
+                <a href="{{ route('student.notifications') }}" class="btn btn-sm btn-warning mt-3">
+                    <i class="fas fa-eye me-1"></i>View All Notifications
+                </a>
+            @else
+                <div style="text-align: center; padding: 40px; color: #858796;">
+                    <i class="fas fa-bell" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px;"></i>
+                    <p style="margin: 0;">No notifications</p>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="stat-card info">
+            <h5 style="color: #5a5c69; font-weight: 700; margin-bottom: 20px;">
+                <i class="fas fa-bolt me-2"></i>Quick Actions
+            </h5>
             <div class="row">
-                <div class="col-md-3">
-                    <div class="stat-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">Class</h6>
-                                <h3 class="mb-0">{{ $student->class->class_name }}</h3>
-                                <small>Section: {{ $student->section->section_name }}</small>
-                            </div>
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                    </div>
+                <div class="col-md-3 mb-3">
+                    <a href="{{ route('student.attendance') }}" class="btn btn-outline-primary w-100" style="padding: 15px;">
+                        <i class="fas fa-calendar-check d-block mb-2" style="font-size: 24px;"></i>
+                        View Attendance
+                    </a>
                 </div>
-
-                <div class="col-md-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">Session</h6>
-                                <h3 class="mb-0">{{ $student->session->session_name }}</h3>
-                                <small>Academic Year</small>
-                            </div>
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                    </div>
+                <div class="col-md-3 mb-3">
+                    <a href="{{ route('student.assignments') }}" class="btn btn-outline-success w-100" style="padding: 15px;">
+                        <i class="fas fa-tasks d-block mb-2" style="font-size: 24px;"></i>
+                        Submit Assignment
+                    </a>
                 </div>
-
-                <div class="col-md-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">Attendance</h6>
-                                <h3 class="mb-0">95%</h3>
-                                <small>This Month</small>
-                            </div>
-                            <i class="fas fa-chart-pie"></i>
-                        </div>
-                    </div>
+                <div class="col-md-3 mb-3">
+                    <a href="{{ route('student.results') }}" class="btn btn-outline-info w-100" style="padding: 15px;">
+                        <i class="fas fa-trophy d-block mb-2" style="font-size: 24px;"></i>
+                        View Results
+                    </a>
                 </div>
-
-                <div class="col-md-3">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-1">Roll No</h6>
-                                <h3 class="mb-0">{{ $student->roll_no ?? 'N/A' }}</h3>
-                                <small>Class Roll</small>
-                            </div>
-                            <i class="fas fa-id-card"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Information -->
-            <div class="row mt-4">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0"><i class="fas fa-user"></i> Personal Information</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <strong>Full Name:</strong>
-                                    <p class="text-muted">{{ $student->full_name }}</p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <strong>Admission No:</strong>
-                                    <p class="text-muted">{{ $student->admission_no }}</p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <strong>Date of Birth:</strong>
-                                    <p class="text-muted">{{ $student->date_of_birth->format('d M, Y') }}</p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <strong>Gender:</strong>
-                                    <p class="text-muted">{{ $student->gender }}</p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <strong>Father's Name:</strong>
-                                    <p class="text-muted">{{ $student->father_name }}</p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <strong>Mother's Name:</strong>
-                                    <p class="text-muted">{{ $student->mother_name }}</p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <strong>Contact:</strong>
-                                    <p class="text-muted">{{ $student->guardian_phone }}</p>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <strong>Status:</strong>
-                                    <p><span class="badge bg-success">{{ $student->status }}</span></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header bg-info text-white">
-                            <h5 class="mb-0"><i class="fas fa-bell"></i> Notifications</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i> Welcome to your dashboard!
-                            </div>
-                            <div class="alert alert-warning">
-                                <i class="fas fa-exclamation-triangle"></i> Assignment due tomorrow
-                            </div>
-                            <div class="alert alert-success">
-                                <i class="fas fa-check-circle"></i> Attendance marked for today
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-3 mb-3">
+                    <a href="{{ route('student.timetable') }}" class="btn btn-outline-warning w-100" style="padding: 15px;">
+                        <i class="fas fa-clock d-block mb-2" style="font-size: 24px;"></i>
+                        View Timetable
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-$(document).ready(function() {
-    // Logout functionality
-    $('#logoutBtn, #logoutBtn2').click(function(e) {
-        e.preventDefault();
-        
-        Swal.fire({
-            title: 'Logout?',
-            text: 'Are you sure you want to logout?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, logout!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                showLoading();
-                $.ajax({
-                    url: '{{ route("logout") }}',
-                    type: 'POST',
-                    success: function(response) {
-                        hideLoading();
-                        if (response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Logged Out!',
-                                text: response.message,
-                                timer: 1500,
-                                showConfirmButton: false
-                            }).then(() => {
-                                window.location.href = response.redirect;
-                            });
-                        }
-                    },
-                    error: function() {
-                        hideLoading();
-                        showError('Logout failed!');
-                    }
-                });
-            }
-        });
-    });
-});
-</script>
-@endpush

@@ -47,4 +47,31 @@ class StaffMember extends Model
     {
         return $this->first_name . ' ' . $this->last_name;
     }
+
+    // Attendance relationship
+    public function attendances()
+    {
+        return $this->hasMany(StaffAttendance::class, 'staff_id');
+    }
+
+    // Get monthly attendance summary
+    public function getMonthlyAttendanceSummary($year, $month)
+    {
+        $attendances = $this->attendances()
+            ->forMonth($year, $month)
+            ->get();
+
+        return [
+            'total_days' => $attendances->count(),
+            'present' => $attendances->where('status', 'Present')->count(),
+            'absent' => $attendances->where('status', 'Absent')->count(),
+            'late' => $attendances->where('is_late', true)->count(),
+            'half_day' => $attendances->where('status', 'Half Day')->count(),
+            'on_leave' => $attendances->where('status', 'On Leave')->count(),
+            'total_working_hours' => $attendances->sum('working_hours'),
+            'attendance_percentage' => $attendances->count() > 0 
+                ? round(($attendances->whereIn('status', ['Present', 'Half Day', 'Late'])->count() / $attendances->count()) * 100, 2)
+                : 0
+        ];
+    }
 }

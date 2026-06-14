@@ -23,6 +23,12 @@ class Session extends Model
         'is_active' => 'string'
     ];
 
+    // Accessor for name (for backward compatibility)
+    public function getNameAttribute()
+    {
+        return $this->session_name;
+    }
+
     public function students()
     {
         return $this->hasMany(Student::class);

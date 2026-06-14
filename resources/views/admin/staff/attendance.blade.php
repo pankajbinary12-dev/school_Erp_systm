@@ -58,38 +58,60 @@ $(document).ready(function() {
     function loadAttendance() {
         const date = $('#attendanceDate').val();
         
+        // First get all staff
         $.ajax({
             url: '{{ route("admin.staff.data") }}',
             type: 'GET',
-            success: function(response) {
-                let html = '';
-                response.data.forEach(function(staff) {
-                    html += `
-                        <tr>
-                            <td>${staff.employee_id}</td>
-                            <td>${staff.first_name} ${staff.last_name}</td>
-                            <td>${staff.designation}</td>
-                            <td><input type="time" class="form-control form-control-sm check-in" data-id="${staff.id}"></td>
-                            <td><input type="time" class="form-control form-control-sm check-out" data-id="${staff.id}"></td>
-                            <td>
-                                <select class="form-select form-select-sm status-select" data-id="${staff.id}">
-                                    <option value="Present">Present</option>
-                                    <option value="Absent">Absent</option>
-                                    <option value="Half Day">Half Day</option>
-                                    <option value="Late">Late</option>
-                                    <option value="On Leave">On Leave</option>
-                                </select>
-                            </td>
-                            <td><input type="text" class="form-control form-control-sm remarks" data-id="${staff.id}" placeholder="Remarks"></td>
-                            <td>
-                                <button class="btn btn-sm btn-success btn-mark" data-id="${staff.id}">
-                                    <i class="fas fa-check"></i> Mark
-                                </button>
-                            </td>
-                        </tr>
-                    `;
+            success: function(staffResponse) {
+                // Then get attendance for selected date
+                $.ajax({
+                    url: '{{ route("admin.staff.attendance.data") }}',
+                    type: 'GET',
+                    data: { date: date },
+                    success: function(attendanceResponse) {
+                        let html = '';
+                        const attendanceMap = {};
+                        
+                        // Create map of attendance by staff_id
+                        attendanceResponse.data.forEach(function(att) {
+                            attendanceMap[att.staff_id] = att;
+                        });
+                        
+                        staffResponse.data.forEach(function(staff) {
+                            const attendance = attendanceMap[staff.id];
+                            const checkIn = attendance ? attendance.check_in : '';
+                            const checkOut = attendance ? attendance.check_out : '';
+                            const status = attendance ? attendance.status : 'Present';
+                            const remarks = attendance ? attendance.remarks : '';
+                            
+                            html += `
+                                <tr>
+                                    <td>${staff.employee_id}</td>
+                                    <td>${staff.first_name} ${staff.last_name}</td>
+                                    <td>${staff.designation}</td>
+                                    <td><input type="time" class="form-control form-control-sm check-in" data-id="${staff.id}" value="${checkIn}"></td>
+                                    <td><input type="time" class="form-control form-control-sm check-out" data-id="${staff.id}" value="${checkOut}"></td>
+                                    <td>
+                                        <select class="form-select form-select-sm status-select" data-id="${staff.id}">
+                                            <option value="Present" ${status === 'Present' ? 'selected' : ''}>Present</option>
+                                            <option value="Absent" ${status === 'Absent' ? 'selected' : ''}>Absent</option>
+                                            <option value="Half Day" ${status === 'Half Day' ? 'selected' : ''}>Half Day</option>
+                                            <option value="Late" ${status === 'Late' ? 'selected' : ''}>Late</option>
+                                            <option value="On Leave" ${status === 'On Leave' ? 'selected' : ''}>On Leave</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control form-control-sm remarks" data-id="${staff.id}" placeholder="Remarks" value="${remarks}"></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success btn-mark" data-id="${staff.id}">
+                                            <i class="fas fa-check"></i> Mark
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        $('#attendanceBody').html(html);
+                    }
                 });
-                $('#attendanceBody').html(html);
             }
         });
     }
@@ -102,6 +124,10 @@ $(document).ready(function() {
         const status = $(`.status-select[data-id="${staffId}"]`).val();
         const remarks = $(`.remarks[data-id="${staffId}"]`).val();
         
+        const btn = $(this);
+        const originalHtml = btn.html();
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+        
         $.ajax({
             url: '{{ route("admin.staff.attendance.mark") }}',
             type: 'POST',
@@ -109,22 +135,39 @@ $(document).ready(function() {
                 _token: '{{ csrf_token() }}',
                 staff_id: staffId,
                 attendance_date: date,
-                check_in: checkIn,
-                check_out: checkOut,
+                check_in: checkIn || null,
+                check_out: checkOut || null,
                 status: status,
-                remarks: remarks
+                remarks: remarks || null
             },
             success: function(response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: response.message,
-                    timer: 1500,
-                    showConfirmButton: false
-                });
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: response.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    btn.prop('disabled', false).html(originalHtml);
+                } else {
+                    Swal.fire('Error!', response.message || 'Failed to mark attendance', 'error');
+                    btn.prop('disabled', false).html(originalHtml);
+                }
             },
-            error: function() {
-                Swal.fire('Error!', 'Failed to mark attendance', 'error');
+            error: function(xhr) {
+                let message = 'Failed to mark attendance';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                } else if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    message = Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    html: message
+                });
+                btn.prop('disabled', false).html(originalHtml);
             }
         });
     });

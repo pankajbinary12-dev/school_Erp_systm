@@ -39,8 +39,12 @@ class Teacher extends Authenticatable
 
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class, 'teacher_subjects')
-            ->withPivot('class_id', 'section_id');
+        return $this->hasMany(\DB::table('teacher_subjects')->getModel(), 'teacher_id');
+    }
+
+    public function assignedClasses()
+    {
+        return $this->hasMany(\App\Models\TeacherSubject::class, 'teacher_id');
     }
 
     public function getFullNameAttribute()

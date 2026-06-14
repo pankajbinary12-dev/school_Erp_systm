@@ -37,13 +37,8 @@ return new class extends Migration
                 $table->dropColumn('is_active');
             });
             
-            // Rename temp column to is_active and set default
-            DB::statement("ALTER TABLE {$tableName} RENAME COLUMN is_active_temp TO is_active");
-            DB::statement("ALTER TABLE {$tableName} ALTER COLUMN is_active SET DEFAULT 'Active'");
-            DB::statement("ALTER TABLE {$tableName} ALTER COLUMN is_active SET NOT NULL");
-            
-            // Add check constraint
-            DB::statement("ALTER TABLE {$tableName} ADD CONSTRAINT {$tableName}_is_active_check CHECK (is_active IN ('Active', 'Inactive'))");
+            // Rename temp column to is_active (MariaDB compatible)
+            DB::statement("ALTER TABLE {$tableName} CHANGE is_active_temp is_active VARCHAR(20) NOT NULL DEFAULT 'Active'");
         }
     }
 
@@ -61,9 +56,6 @@ return new class extends Migration
         ];
 
         foreach ($tables as $tableName) {
-            // Drop check constraint
-            DB::statement("ALTER TABLE {$tableName} DROP CONSTRAINT IF EXISTS {$tableName}_is_active_check");
-            
             // Add temporary boolean column
             Schema::table($tableName, function (Blueprint $table) {
                 $table->boolean('is_active_temp')->default(true);
@@ -78,8 +70,8 @@ return new class extends Migration
                 $table->dropColumn('is_active');
             });
             
-            // Rename temp column
-            DB::statement("ALTER TABLE {$tableName} RENAME COLUMN is_active_temp TO is_active");
+            // Rename temp column (MariaDB compatible)
+            DB::statement("ALTER TABLE {$tableName} CHANGE is_active_temp is_active TINYINT(1) NOT NULL DEFAULT 1");
         }
     }
 };

@@ -1,319 +1,279 @@
-# 🎓 School ERP System - Complete Professional Solution
+# 🎓 School ERP System
 
-[![Status](https://img.shields.io/badge/Status-Production%20Ready-success)]()
-[![Laravel](https://img.shields.io/badge/Laravel-11-red)]()
-[![PHP](https://img.shields.io/badge/PHP-8.2+-blue)]()
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12+-blue)]()
+A comprehensive School Management System built with Laravel 11, featuring student management, attendance tracking, library management, and role-based access control.
 
-## 🚀 Quick Start (3 Simple Steps!)
+## 🌐 Live Demo
+**URL:** https://myschool.iympotech.com
 
-1. **Create Database:**
-   ```sql
-   CREATE DATABASE school_erp;
-   ```
+## ✨ Features
 
-2. **Run Setup:**
-   ```bash
-   SETUP.bat
-   ```
+### 📚 Student Management
+- Student admission with auto-generated admission numbers
+- Student promotion between classes
+- Complete student profile management
+- Student attendance tracking
 
-3. **Start Server:**
-   ```bash
-   START_SERVER.bat
-   ```
+### 👨‍🏫 Teacher Management
+- Teacher registration and profile management
+- Subject assignment
+- Teacher attendance tracking
 
-**That's it!** Visit `http://localhost:8000` 🎉
+### 👥 Staff Management
+- Staff member management
+- Staff attendance tracking
+- Leave management system
 
----
+### 📖 Library Management
+- Book categories management
+- Books inventory with ISBN tracking
+- Issue and return books to students/teachers/staff
+- Fine calculation for overdue books
+- Track available vs issued books
 
-## 🎓 Features
+### 📊 Masters Data
+- Academic sessions management
+- Classes and sections
+- Subjects management
+- Class-section mapping
 
-### ✅ Complete Functionality
-- **Multi-User Login System** (Student & Teacher)
-- **Student Management** (Admission, Update, Delete, Promote)
-- **Teacher/Staff Management** (Add, Update, Delete)
-- **Master Data Management**
-  - Sessions (Academic Years)
-  - Classes
-  - Sections
-  - Subjects
-- **Student Dashboard** with personal information
-- **Teacher Dashboard** with schedule and notifications
-- **Professional UI** with Bootstrap 5
-- **AJAX-based** operations (No page reload)
-- **SweetAlert2** for beautiful notifications
-- **PostgreSQL Database** support
+### 🔐 Security & Permissions
+- Role-based access control (RBAC)
+- 5 predefined roles: Super Admin, Admin, Teacher, Accountant, Librarian
+- 32 granular permissions
+- Assign permissions to roles
+- Assign roles to users
 
-## 🚀 Installation Methods
+### 📱 Additional Features
+- Responsive design (mobile-friendly)
+- AJAX-based operations (no page reload)
+- DataTables for search, sort, and pagination
+- SweetAlert2 for beautiful notifications
+- Soft deletes for data recovery
+- Real-time form validation
 
-### Method 1: Automatic Setup (Recommended) ⚡
+## 🛠️ Technology Stack
 
-**Just 3 commands:**
+- **Backend:** Laravel 11.x
+- **Frontend:** Bootstrap 5.3, jQuery 3.6
+- **Database:** MySQL 8.0+
+- **PHP:** 8.2+
+- **Additional Libraries:**
+  - DataTables 1.13
+  - SweetAlert2 11.x
+  - Font Awesome 6.x
 
+## 📋 Requirements
+
+- PHP >= 8.2
+- Composer
+- MySQL >= 8.0
+- Node.js & NPM (optional, for asset compilation)
+- Apache/Nginx web server
+
+## 🚀 Installation
+
+### 1. Clone Repository
 ```bash
-# 1. Create database
-psql -U postgres -c "CREATE DATABASE school_erp;"
-
-# 2. Run setup
-SETUP.bat
-
-# 3. Start server
-START_SERVER.bat
+git clone <repository-url>
+cd school-erp-system
 ```
 
-### Method 2: Manual Setup 🔧
-
+### 2. Install Dependencies
 ```bash
-# Step 1: Install dependencies
 composer install
+```
 
-# Step 2: Generate application key
+### 3. Environment Setup
+```bash
+cp .env.example .env
 php artisan key:generate
+```
 
-# Step 3: Configure database in .env
-# DB_DATABASE=school_erp
-# DB_USERNAME=postgres
-# DB_PASSWORD=your_password
+### 4. Configure Database
+Edit `.env` file:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=school_erp
+DB_USERNAME=root
+DB_PASSWORD=your_password
+```
 
-# Step 4: Run migrations
+### 5. Run Migrations & Seeders
+```bash
 php artisan migrate
-
-# Step 5: Seed sample data
 php artisan db:seed
+php artisan db:seed --class=RolesAndPermissionsSeeder
+```
 
-# Step 6: Create storage link
-php artisan storage:link
-
-# Step 7: Clear cache
-php artisan optimize:clear
-
-# Step 8: Start server
+### 6. Start Development Server
+```bash
 php artisan serve
 ```
 
-### Method 3: Verify Before Setup ✅
+Visit: http://127.0.0.1:8000
 
-```bash
-# Check system requirements
-VERIFY_SYSTEM.bat
+## 🔑 Default Login Credentials
 
-# Then run setup
-SETUP.bat
+### Admin Panel
+```
+URL: /admin/login
+Username: admin
+Password: admin123
 ```
 
----
+### Student Portal
+```
+URL: /student/login
+Username: student001
+Password: password
+```
 
-## 📋 Prerequisites
+### Teacher Portal
+```
+URL: /teacher/login
+Username: teacher001
+Password: password
+```
 
-- ✅ PHP 8.2 or higher
-- ✅ Composer
-- ✅ PostgreSQL 12 or higher
-- ✅ Windows OS (for .bat scripts)
-
----
-
-## 🎯 Available Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `SETUP.bat` | Complete installation & setup |
-| `START_SERVER.bat` | Start development server |
-| `VERIFY_SYSTEM.bat` | Check system requirements |
-| `COMPLETE_SETUP.bat` | Alternative setup script |
-
-## 📝 Default Login Credentials
-
-### Sample Student Login
-- **Username**: `student001`
-- **Password**: `password`
-- **User Type**: Student
-
-### Sample Teacher Login
-- **Username**: `teacher001`
-- **Password**: `password`
-- **User Type**: Teacher
-
-**Note**: You need to create these users first through database or admin panel.
-
-## 🗂️ Project Structure
+## 📁 Project Structure
 
 ```
 school-erp-system/
 ├── app/
-│   ├── Http/
-│   │   └── Controllers/
-│   │       ├── AuthController.php
-│   │       ├── StudentController.php
-│   │       ├── TeacherController.php
-│   │       └── MasterController.php
-│   └── Models/
-│       ├── Student.php
-│       ├── Teacher.php
-│       ├── Classes.php
-│       ├── Section.php
-│       ├── Subject.php
-│       └── Session.php
+│   ├── Http/Controllers/
+│   │   ├── AdminController.php
+│   │   ├── AttendanceController.php
+│   │   ├── LibraryController.php
+│   │   ├── MasterController.php
+│   │   ├── RolePermissionController.php
+│   │   ├── StaffController.php
+│   │   ├── StudentController.php
+│   │   └── TeacherController.php
+│   ├── Models/
+│   │   ├── Book.php
+│   │   ├── BookCategory.php
+│   │   ├── BookIssue.php
+│   │   ├── Classes.php
+│   │   ├── Permission.php
+│   │   ├── Role.php
+│   │   ├── Section.php
+│   │   ├── StaffMember.php
+│   │   ├── StaffLeave.php
+│   │   ├── Student.php
+│   │   ├── StudentAttendance.php
+│   │   └── Teacher.php
+│   └── Traits/
+│       └── HasRolesAndPermissions.php
 ├── database/
-│   └── migrations/
-│       ├── 2024_01_01_000001_create_sessions_table.php
-│       ├── 2024_01_01_000002_create_classes_table.php
-│       ├── 2024_01_01_000003_create_sections_table.php
-│       ├── 2024_01_01_000004_create_subjects_table.php
-│       ├── 2024_01_01_000005_create_class_subjects_table.php
-│       ├── 2024_01_01_000006_create_students_table.php
-│       ├── 2024_01_01_000007_create_teachers_table.php
-│       └── 2024_01_01_000008_create_teacher_subjects_table.php
+│   ├── migrations/
+│   └── seeders/
 ├── resources/
 │   └── views/
-│       ├── layouts/
-│       │   └── app.blade.php
-│       ├── auth/
-│       │   └── login.blade.php
-│       ├── student/
-│       │   └── dashboard.blade.php
-│       └── teacher/
-│           └── dashboard.blade.php
+│       └── admin/
+│           ├── attendance/
+│           ├── library/
+│           ├── masters/
+│           ├── settings/
+│           ├── staff/
+│           ├── students/
+│           └── teachers/
 └── routes/
     └── web.php
 ```
 
-## 🎨 Technology Stack
+## 📖 Module Documentation
 
-- **Backend**: Laravel 11
-- **Database**: PostgreSQL
-- **Frontend**: Bootstrap 5, jQuery, AJAX
-- **Notifications**: SweetAlert2
-- **Icons**: Font Awesome 6
+### Student Module
+- **Admission:** Auto-generated admission numbers (format: YYYY0001)
+- **Promotion:** Bulk promote students to next class
+- **Attendance:** Manual and biometric attendance tracking
 
-## 📋 Database Schema
+### Library Module
+- **Categories:** Organize books by categories
+- **Books:** Complete inventory with ISBN, author, publisher
+- **Issue/Return:** Track book circulation with fine management
 
-### Students Table
-- Personal Information (Name, DOB, Gender, etc.)
-- Academic Information (Class, Section, Session)
-- Guardian Information
-- Login Credentials (Username, Password)
-- Photo Upload Support
+### Staff Module
+- **Members:** Complete staff profile management
+- **Attendance:** Daily attendance tracking
+- **Leave:** Leave application and approval system
 
-### Teachers Table
-- Personal Information
-- Professional Information (Qualification, Joining Date)
-- Login Credentials
-- Photo Upload Support
+### Permissions Module
+- **Roles:** 5 predefined roles with customizable permissions
+- **Permissions:** 32 granular permissions across 8 modules
+- **Assignment:** Easy role and permission assignment interface
 
-### Master Tables
-- **Sessions**: Academic years with active status
-- **Classes**: Class names and numeric values
-- **Sections**: Sections per class with capacity
-- **Subjects**: Subject details with codes
+## 🔧 Configuration
 
-## 🔐 Security Features
-
-- Password Hashing (bcrypt)
-- CSRF Protection
-- Multiple Authentication Guards (Student, Teacher)
-- Session Management
-- Input Validation
-
-## 🎯 Key Features
-
-### 1. Login System
-- Beautiful login page with user type selection
-- AJAX-based authentication
-- SweetAlert notifications
-- Password visibility toggle
-
-### 2. Student Dashboard
-- Personal information display
-- Class and section details
-- Attendance overview
-- Notifications panel
-- Profile management
-
-### 3. Teacher Dashboard
-- Professional information
-- Assigned classes overview
-- Today's schedule
-- Student management access
-- Grade book access
-
-### 4. Admin Features
-- Complete CRUD for all masters
-- Student admission and management
-- Teacher management
-- Student promotion system
-- Dynamic dropdowns (Class → Sections)
-
-## 📱 Responsive Design
-
-- Mobile-friendly interface
-- Bootstrap 5 responsive grid
-- Touch-friendly buttons
-- Optimized for all screen sizes
-
-## 🎨 UI/UX Features
-
-- Modern gradient designs
-- Smooth animations
-- Card-based layouts
-- Professional color scheme
-- Icon-rich interface
-- Loading overlays
-- Beautiful alerts
-
-## 🔄 AJAX Operations
-
-All operations are AJAX-based:
-- No page reloads
-- Instant feedback
-- Loading indicators
-- Success/Error notifications
-- Form validation
-
-## 📊 Future Enhancements
-
-- Attendance Management
-- Fee Management
-- Exam & Results Module
-- Timetable Management
-- Library Management
-- Transport Management
-- Hostel Management
-- Reports & Analytics
-- Parent Portal
-- SMS/Email Notifications
-
-## 🐛 Troubleshooting
-
-### Database Connection Error
-```bash
-# Check PostgreSQL service
-# Windows: Check Services
-# Linux: sudo systemctl status postgresql
+### Email Configuration
+Edit `.env`:
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=your-email@gmail.com
+MAIL_FROM_NAME="${APP_NAME}"
 ```
 
-### Permission Issues
-```bash
-chmod -R 775 storage bootstrap/cache
-```
+### Session Configuration
+Default session lifetime: 120 minutes
+Edit `config/session.php` to change.
 
-### Clear Cache
-```bash
-php artisan cache:clear
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
-```
+## 🛡️ Security
+
+- CSRF protection enabled
+- XSS protection
+- SQL injection prevention via Eloquent ORM
+- Password hashing with bcrypt
+- Role-based access control
+- Soft deletes for data recovery
+
+## 📊 Database Schema
+
+### Key Tables  
+- `admins` - Admin users  
+- `students` - Student records 
+- `teachers` - Teacher records   
+- `staff_members` - Staff records   
+- `classes` - Class definitions 
+- `sections` - Section definitions 
+- `subjects` - Subject definitions 
+- `student_attendance` - Student attendance records
+- `staff_attendance` - Staff attendance records
+- `staff_leaves` - Staff leave applications
+- `books` - Book inventory 
+- `book_categories` - Book categories
+- `book_issues` - Book issue/return records
+- `roles` - User roles 
+- `permissions` - System permissions 
+
+## 🤝 Contributing  
+  
+1. Fork the repository  
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is proprietary software. All rights reserved.
+
+## 👨‍💻 Developer
+
+Developed for production deployment at myschool.iympotech.com
 
 ## 📞 Support
 
-For any issues or questions, please check:
-- Laravel Documentation: https://laravel.com/docs
-- PostgreSQL Documentation: https://www.postgresql.org/docs/
-
-## 📄 License
-
-This project is open-source and available for educational purposes.
+For support and queries, please contact the system administrator.
 
 ---
 
-**Developed with ❤️ for School Management**
+**Version:** 1.0.0   
+**Last Updated:** February 2026  
+**Status:** Production Ready ✅  

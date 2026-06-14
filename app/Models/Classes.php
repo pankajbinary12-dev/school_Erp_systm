@@ -20,6 +20,12 @@ class Classes extends Model
         'is_active' => 'string'
     ];
 
+    // Accessor for name (for backward compatibility)
+    public function getNameAttribute()
+    {
+        return $this->class_name;
+    }
+
     public function sections()
     {
         return $this->hasMany(Section::class, 'class_id');
@@ -33,5 +39,10 @@ class Classes extends Model
     public function subjects()
     {
         return $this->belongsToMany(Subject::class, 'class_subjects', 'class_id', 'subject_id');
+    }
+
+    public function teachers()
+    {
+        return $this->belongsToMany(Teacher::class, 'teacher_subjects', 'class_id', 'teacher_id');
     }
 }

@@ -45,13 +45,18 @@
             </thead>
             <tbody>
                 @foreach($students as $student)
-                <tr>
+                <tr id="student-row-{{ $student->id }}">
                     <td>{{ $student->admission_no }}</td>
                     <td>
                         <div class="d-flex align-items-center">
-                            <div class="student-avatar me-2">
-                                {{ strtoupper(substr($student->first_name, 0, 1)) }}
-                            </div>
+                            @if($student->photo)
+                                <img src="{{ asset('storage/' . $student->photo) }}" alt="{{ $student->first_name }}" 
+                                     style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                            @else
+                                <div class="student-avatar me-2">
+                                    {{ strtoupper(substr($student->first_name, 0, 1)) }}
+                                </div>
+                            @endif
                             <div>
                                 <strong>{{ $student->first_name }} {{ $student->last_name }}</strong>
                             </div>
@@ -60,7 +65,7 @@
                     <td>{{ $student->class->class_name ?? 'N/A' }}</td>
                     <td>{{ $student->section->section_name ?? 'N/A' }}</td>
                     <td>{{ $student->father_name }}</td>
-                    <td>{{ $student->mobile }}</td>
+                    <td>{{ $student->guardian_phone }}</td>
                     <td>
                         <span class="badge bg-{{ $student->status == 'Active' ? 'success' : 'danger' }}">
                             {{ $student->status }}
@@ -88,6 +93,7 @@
 @push('scripts')
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function() {
         $('#studentsTable').DataTable({
@@ -97,10 +103,44 @@
     });
 
     function deleteStudent(id) {
-        if (confirm('Are you sure you want to delete this student?')) {
-            // Add delete logic here
-            alert('Delete functionality will be implemented');
-        }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/admin/students/${id}`,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        $('#student-row-' + id).fadeOut(500, function() {
+                            $(this).remove();
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Failed to delete student'
+                        });
+                    }
+                });
+            }
+        });
     }
 </script>
 @endpush

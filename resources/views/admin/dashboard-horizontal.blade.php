@@ -239,7 +239,8 @@
     </div>
 
     <!-- Horizontal Menu Bar -->
-    <div class="horizontal-menu">
+     @extends('admin.layouts.horizontal')
+    <!-- <div class="horizontal-menu">
         <div class="menu-container">
             <div class="menu-item">
                 <a href="/admin/dashboard" class="menu-link active">
@@ -311,7 +312,19 @@
                     </a>
                 </div>
             </div>
-
+           <div class="menu-item">
+                <a href="#" class="menu-link {{ request()->is('admin/teachers*') ? 'active' : '' }}">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Teachers</span>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </a>
+                <div class="dropdown-menu-custom">
+                    <a href="/admin/teachers" class="dropdown-item-custom">
+                        <i class="fas fa-list"></i>
+                        <span>All Teachers</span>
+                    </a>
+                </div>
+            </div>
             <div class="menu-item">
                 <a href="#" class="menu-link">
                     <i class="fas fa-calendar-check"></i>
@@ -445,18 +458,18 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Dashboard Content -->
     <div class="main-content">
-        <!-- Stats Cards -->
+        <!-- Stats Cards Row 1: Basic Stats -->
         <div class="stats-row">
             <div class="stat-card primary">
                 <div class="stat-card-content">
                     <div class="stat-info">
                         <h6>Total Students</h6>
                         <h2>{{ $stats['total_students'] }}</h2>
-                        <small><i class="fas fa-arrow-up"></i> 5.2%</small>
+                        <small><i class="fas fa-users"></i> Active Students</small>
                     </div>
                     <div class="stat-icon">
                         <i class="fas fa-user-graduate"></i>
@@ -469,7 +482,7 @@
                     <div class="stat-info">
                         <h6>Total Staff</h6>
                         <h2>{{ $stats['total_teachers'] }}</h2>
-                        <small><i class="fas fa-arrow-up"></i> 2.1%</small>
+                        <small><i class="fas fa-chalkboard-teacher"></i> Teachers</small>
                     </div>
                     <div class="stat-icon">
                         <i class="fas fa-users"></i>
@@ -481,8 +494,8 @@
                 <div class="stat-card-content">
                     <div class="stat-info">
                         <h6>Present Today</h6>
-                        <h2>{{ $stats['total_students'] }}</h2>
-                        <small><i class="fas fa-arrow-up"></i> 1.5%</small>
+                        <h2>{{ $attendanceStats['present_today'] }}</h2>
+                        <small><i class="fas fa-user-check"></i> Students</small>
                     </div>
                     <div class="stat-icon">
                         <i class="fas fa-user-check"></i>
@@ -494,8 +507,8 @@
                 <div class="stat-card-content">
                     <div class="stat-info">
                         <h6>Attendance Rate</h6>
-                        <h2>100%</h2>
-                        <small><i class="fas fa-arrow-up"></i> 0.8%</small>
+                        <h2>{{ $attendanceStats['attendance_percentage'] }}%</h2>
+                        <small><i class="fas fa-chart-line"></i> Today</small>
                     </div>
                     <div class="stat-icon">
                         <i class="fas fa-chart-line"></i>
@@ -504,121 +517,374 @@
             </div>
         </div>
 
+        <!-- Stats Cards Row 2: Examination Stats -->
+        <div class="stats-row">
+            <div class="stat-card primary">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Total Exams</h6>
+                        <h2>{{ $examStats['total_exams'] }}</h2>
+                        <small><i class="fas fa-clipboard-list"></i> All Exams</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Ongoing Exams</h6>
+                        <h2>{{ $examStats['ongoing_exams'] }}</h2>
+                        <small><i class="fas fa-hourglass-half"></i> In Progress</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Completed Exams</h6>
+                        <h2>{{ $examStats['completed_exams'] }}</h2>
+                        <small><i class="fas fa-check-circle"></i> Finished</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card info">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Published Results</h6>
+                        <h2>{{ $examStats['published_results'] }}</h2>
+                        <small><i class="fas fa-trophy"></i> Results Out</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Row 3: Fee Stats -->
+        <div class="stats-row">
+            <div class="stat-card success">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Total Fee Collected</h6>
+                        <h2>₹{{ number_format($feeStats['total_fee_collected'], 0) }}</h2>
+                        <small><i class="fas fa-rupee-sign"></i> Collected</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Pending Fees</h6>
+                        <h2>₹{{ number_format($feeStats['pending_fees'], 0) }}</h2>
+                        <small><i class="fas fa-exclamation-triangle"></i> Due</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card info">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Students with Fees</h6>
+                        <h2>{{ $feeStats['total_students_with_fees'] }}</h2>
+                        <small><i class="fas fa-users"></i> Total</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card primary">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Paid Students</h6>
+                        <h2>{{ $feeStats['paid_students'] }}</h2>
+                        <small><i class="fas fa-check"></i> Completed</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Row 4: Additional Student Stats -->
+        <div class="stats-row">
+            <div class="stat-card primary">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>New Admissions</h6>
+                        <h2>{{ $studentStats['new_admissions_this_month'] }}</h2>
+                        <small><i class="fas fa-calendar"></i> This Month</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Fee Defaulters</h6>
+                        <h2>{{ $studentStats['students_with_pending_fees'] }}</h2>
+                        <small><i class="fas fa-exclamation-circle"></i> Pending</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card info">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Male Students</h6>
+                        <h2>{{ $studentStats['total_male_students'] }}</h2>
+                        <small><i class="fas fa-male"></i> Active</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-male"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-card-content">
+                    <div class="stat-info">
+                        <h6>Female Students</h6>
+                        <h2>{{ $studentStats['total_female_students'] }}</h2>
+                        <small><i class="fas fa-female"></i> Active</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-female"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Content Row -->
         <div class="row">
             <div class="col-lg-4 mb-4">
-                <!-- Today's Leave Request -->
+                <!-- Today's Birthday - Real Data -->
                 <div class="content-card">
                     <div class="content-card-header">
-                        <h5>Today's Leave Request</h5>
+                        <h5>🎂 Today's Birthday</h5>
                         <a href="#" class="view-all-link">View All</a>
                     </div>
-                    <!-- Scrollable container -->
-                    <div class="leave-request-container">
-                        <div class="leave-request-item">
-                            <div>
-                                <i class="fas fa-file-alt" style="color: var(--primary-color); margin-right: 10px;"></i>
-                                <span style="font-weight: 500;">Leave Request</span>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        @if($todayBirthdays->count() > 0)
+                            @foreach($todayBirthdays as $student)
+                            <div class="birthday-item">
+                                <div class="birthday-icon">
+                                    <i class="fas fa-birthday-cake"></i>
+                                </div>
+                                <div class="birthday-info">
+                                    <h6>{{ $student->first_name }} {{ $student->last_name }}</h6>
+                                    <small>{{ $student->class->class_name ?? 'N/A' }} - {{ $student->section->section_name ?? 'N/A' }}</small>
+                                    <small style="display: block; color: #ff6b9d;">
+                                        <i class="fas fa-gift"></i> {{ \Carbon\Carbon::parse($student->date_of_birth)->format('d M') }}
+                                    </small>
+                                </div>
                             </div>
-                            <span class="leave-badge">3</span>
+                            @endforeach
+                        @else
+                        <div style="text-align: center; padding: 30px 0; color: #858796;">
+                            <i class="fas fa-birthday-cake" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px;"></i>
+                            <p style="margin: 0;">No birthdays today</p>
                         </div>
-
-                        <div class="leave-request-item">
-                            <div>
-                                <i class="fas fa-file-alt" style="color: var(--primary-color); margin-right: 10px;"></i>
-                                <span style="font-weight: 500;">Leave Request</span>
-                            </div>
-                            <span class="leave-badge">3</span>
-                        </div>
-
-                        <div class="leave-request-item">
-                            <div>
-                                <i class="fas fa-file-alt" style="color: var(--primary-color); margin-right: 10px;"></i>
-                                <span style="font-weight: 500;">Leave Request</span>
-                            </div>
-                            <span class="leave-badge">3</span>
-                        </div>
-
-                        <div class="leave-request-item">
-                            <div>
-                                <i class="fas fa-file-alt" style="color: var(--primary-color); margin-right: 10px;"></i>
-                                <span style="font-weight: 500;">Leave Request</span>
-                            </div>
-                            <span class="leave-badge">3</span>
-                        </div>
-
-                        <div class="leave-request-item">
-                            <div>
-                                <i class="fas fa-file-alt" style="color: var(--primary-color); margin-right: 10px;"></i>
-                                <span style="font-weight: 500;">Leave Request</span>
-                            </div>
-                            <span class="leave-badge">3</span>
-                        </div>
-
-                        <div class="leave-request-item">
-                            <div>
-                                <i class="fas fa-file-alt" style="color: var(--primary-color); margin-right: 10px;"></i>
-                                <span style="font-weight: 500;">Leave Request</span>
-                            </div>
-                            <span class="leave-badge">3</span>
-                        </div>
-
-                        <div class="leave-request-item">
-                            <div>
-                                <i class="fas fa-file-alt" style="color: var(--primary-color); margin-right: 10px;"></i>
-                                <span style="font-weight: 500;">Leave Request</span>
-                            </div>
-                            <span class="leave-badge">3</span>
-                        </div>
-
-
-
-                    </div>
-                </div>
-
-                <!-- Absent Staff -->
-                <div class="content-card">
-                    <div class="content-card-header">
-                        <h5>Absent Staff</h5>
-                        <a href="#" class="view-all-link">View All</a>
-                    </div>
-                    <div style="text-align: center; padding: 30px 0; color: #858796;">
-                        <i class="fas fa-users" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px;"></i>
-                        <p style="margin: 0;">No absent staff today</p>
+                        @endif
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-4 mb-4">
-                <!-- Today's Birthday -->
+                <!-- Staff Attendance Today -->
                 <div class="content-card">
                     <div class="content-card-header">
-                        <h5>Today's Birthday</h5>
-                        <a href="#" class="view-all-link">View All</a>
+                        <h5>👥 Staff Attendance Today</h5>
+                        <a href="/admin/attendance/staff" class="view-all-link">View All</a>
                     </div>
-                    @if($recent_students->count() > 0)
-                    @foreach($recent_students->take(3) as $student)
-                    <div class="birthday-item">
-                        <div class="birthday-icon">
-                            <i class="fas fa-birthday-cake"></i>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        @if($staffAttendanceToday->count() > 0)
+                            @foreach($staffAttendanceToday as $attendance)
+                            @php
+                                $statusColor = match($attendance->status) {
+                                    'Present' => '#1cc88a',
+                                    'Late' => '#f6c23e',
+                                    'Leave' => '#36b9cc',
+                                    'Absent' => '#e74a3b',
+                                    default => '#858796'
+                                };
+                                $statusIcon = match($attendance->status) {
+                                    'Present' => 'fa-check-circle',
+                                    'Late' => 'fa-clock',
+                                    'Leave' => 'fa-calendar-times',
+                                    'Absent' => 'fa-times-circle',
+                                    default => 'fa-question-circle'
+                                };
+                            @endphp
+                            <div style="background: #f8f9fc; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid {{ $statusColor }};">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h6 style="margin: 0; color: #5a5c69; font-size: 14px; font-weight: 600;">
+                                            {{ $attendance->staff->first_name ?? 'N/A' }} {{ $attendance->staff->last_name ?? '' }}
+                                        </h6>
+                                        <small style="color: #858796; font-size: 12px;">
+                                            <i class="fas fa-clock"></i> 
+                                            {{ $attendance->check_in ? \Carbon\Carbon::parse($attendance->check_in)->format('h:i A') : 'N/A' }}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <span style="background: {{ $statusColor }}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">
+                                            <i class="fas {{ $statusIcon }}"></i> {{ $attendance->status }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        @else
+                        <div style="text-align: center; padding: 30px 0; color: #858796;">
+                            <i class="fas fa-user-clock" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px;"></i>
+                            <p style="margin: 0;">No staff attendance marked today</p>
                         </div>
-                        <div class="birthday-info">
-                            <h6>{{ $student->first_name }} {{ $student->last_name }}</h6>
-                            <small>{{ $student->class->class_name ?? 'N/A' }} - {{ $student->section->section_name ?? 'N/A' }}</small>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 mb-4">
+                <!-- Student Attendance Details Today -->
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h5>📋 Student Attendance Details</h5>
+                        <a href="/admin/attendance/student" class="view-all-link">View All</a>
+                    </div>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        @if($studentAttendanceDetails->count() > 0)
+                            @foreach($studentAttendanceDetails as $attendance)
+                            @php
+                                $statusColor = match($attendance->status) {
+                                    'Present' => '#1cc88a',
+                                    'Late' => '#f6c23e',
+                                    'Leave' => '#36b9cc',
+                                    'Absent' => '#e74a3b',
+                                    default => '#858796'
+                                };
+                                $statusIcon = match($attendance->status) {
+                                    'Present' => 'fa-check-circle',
+                                    'Late' => 'fa-clock',
+                                    'Leave' => 'fa-calendar-times',
+                                    'Absent' => 'fa-times-circle',
+                                    default => 'fa-question-circle'
+                                };
+                            @endphp
+                            <div style="background: #f8f9fc; padding: 10px; border-radius: 8px; margin-bottom: 6px; border-left: 4px solid {{ $statusColor }};">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <h6 style="margin: 0; color: #5a5c69; font-size: 13px; font-weight: 600;">
+                                            {{ $attendance->student->first_name ?? 'N/A' }} {{ $attendance->student->last_name ?? '' }}
+                                        </h6>
+                                        <small style="color: #858796; font-size: 11px;">
+                                            {{ $attendance->student->class->class_name ?? 'N/A' }} - {{ $attendance->student->section->section_name ?? 'N/A' }}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <span style="background: {{ $statusColor }}; color: white; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 600;">
+                                            <i class="fas {{ $statusIcon }}"></i> {{ $attendance->status }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        @else
+                        <div style="text-align: center; padding: 30px 0; color: #858796;">
+                            <i class="fas fa-clipboard-list" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px;"></i>
+                            <p style="margin: 0;">No student attendance marked today</p>
                         </div>
+                        @endif
                     </div>
-                    @endforeach
-                    @else
-                    <div style="text-align: center; padding: 30px 0; color: #858796;">
-                        <i class="fas fa-birthday-cake" style="font-size: 48px; opacity: 0.3; margin-bottom: 10px;"></i>
-                        <p style="margin: 0;">No birthdays today</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Class-wise Attendance Table -->
+        <div class="row">
+            <div class="col-lg-12 mb-4">
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h5>📊 Class-wise Attendance Today</h5>
+                        <a href="/admin/attendance/student/reports" class="view-all-link">View Reports</a>
                     </div>
-                    @endif
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead style="background: #f8f9fc;">
+                                <tr>
+                                    <th>Class</th>
+                                    <th>Total</th>
+                                    <th>Present</th>
+                                    <th>Absent</th>
+                                    <th>Leave</th>
+                                    <th>Late</th>
+                                    <th>Attendance %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($classWiseAttendance->count() > 0)
+                                    @foreach($classWiseAttendance as $classAtt)
+                                    @php
+                                        $percentage = $classAtt->total > 0 ? round(($classAtt->present / $classAtt->total) * 100, 2) : 0;
+                                        $percentageColor = $percentage >= 90 ? '#1cc88a' : ($percentage >= 75 ? '#f6c23e' : '#e74a3b');
+                                    @endphp
+                                    <tr>
+                                        <td><strong>{{ $classAtt->class->class_name ?? 'N/A' }}</strong></td>
+                                        <td>{{ $classAtt->total }}</td>
+                                        <td><span style="color: #1cc88a; font-weight: 600;"><i class="fas fa-check-circle"></i> {{ $classAtt->present }}</span></td>
+                                        <td><span style="color: #e74a3b; font-weight: 600;"><i class="fas fa-times-circle"></i> {{ $classAtt->absent }}</span></td>
+                                        <td><span style="color: #36b9cc; font-weight: 600;"><i class="fas fa-calendar-times"></i> {{ $classAtt->on_leave }}</span></td>
+                                        <td><span style="color: #f6c23e; font-weight: 600;"><i class="fas fa-clock"></i> {{ $classAtt->late }}</span></td>
+                                        <td>
+                                            <span style="background: {{ $percentageColor }}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                                                {{ $percentage }}%
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="7" class="text-center" style="padding: 30px; color: #858796;">
+                                            <i class="fas fa-info-circle"></i> No attendance data available for today
+                                        </td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('js/admin-script.js') }}"></script>
 </body>

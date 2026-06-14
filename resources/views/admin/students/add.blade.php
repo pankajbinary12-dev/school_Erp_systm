@@ -11,7 +11,7 @@
         </a>
     </div>
     
-    <form id="addStudentForm">
+    <form id="addStudentForm" enctype="multipart/form-data">
         <div class="row">
             <div class="col-md-4 mb-3">
                 <label class="form-label">Admission Number <span class="text-danger">*</span></label>
@@ -100,11 +100,33 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
-                <input type="tel" class="form-control" name="mobile" required>
+                <input type="tel" class="form-control" name="guardian_phone" required>
             </div>
             <div class="col-md-6 mb-3">
                 <label class="form-label">Email</label>
                 <input type="email" class="form-control" name="email">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Username <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="username" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Password <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" name="password" required minlength="6">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Admission Date <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" name="admission_date" required value="{{ date('Y-m-d') }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Photo</label>
+                <input type="file" class="form-control" name="photo" accept="image/*">
             </div>
         </div>
 
@@ -138,6 +160,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Load sections when class is selected
     $('#classSelect').change(function() {
@@ -157,7 +180,48 @@
     // Form submission
     $('#addStudentForm').submit(function(e) {
         e.preventDefault();
-        alert('Student add functionality will be implemented with API');
+        
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalText = submitBtn.html();
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Saving...');
+        
+        const formData = new FormData(this);
+        
+        $.ajax({
+            url: '{{ route("admin.students.store") }}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: response.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.href = '/admin/students/all';
+                });
+            },
+            error: function(xhr) {
+                let message = 'Something went wrong!';
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    message = Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    html: message
+                });
+                submitBtn.prop('disabled', false).html(originalText);
+            }
+        });
     });
 </script>
 @endpush

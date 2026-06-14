@@ -6,8 +6,31 @@
 
 | User Type | Username | Password | Access Level |
 |-----------|----------|----------|--------------|
+| Admin | admin | admin123 | Admin Dashboard (Full Access) |
 | Student | student001 | password | Student Dashboard |
-| Teacher | teacher001 | password | Teacher Dashboard |
+| Teacher | teacher001 | password | Teacher Dashboard + My Attendance |
+
+---
+
+## 👨‍💼 Admin Credentials
+
+| Username | Password | Role | Features |
+|----------|----------|------|----------|
+| admin | admin123 | Super Admin | Full system access, Staff attendance management, Monthly reports |
+
+### Admin Features:
+- **Staff Attendance Management**: Mark daily attendance for all staff
+- **Monthly Reports**: View comprehensive attendance analytics
+- **Staff Management**: Add/Edit/Delete staff members
+- **Student Management**: Complete student records
+- **Library Management**: Books, categories, issue/return
+- **Fee Management**: Fee collection and reports
+- **Settings**: Roles, permissions, system configuration
+
+### Admin URLs:
+- **Dashboard**: http://127.0.0.1:8000/admin/dashboard
+- **Staff Attendance**: http://127.0.0.1:8000/admin/attendance/staff
+- **Monthly Report**: http://127.0.0.1:8000/admin/attendance/staff/monthly-report
 
 ---
 
@@ -38,13 +61,13 @@
 
 ## 👨‍🏫 All Teacher Credentials (5 Users)
 
-| # | Username | Password | Name | Status |
-|---|----------|----------|------|--------|
-| 1 | teacher001 | password | Teacher1 Singh | Active |
-| 2 | teacher002 | password | Teacher2 Singh | Active |
-| 3 | teacher003 | password | Teacher3 Singh | Active |
-| 4 | teacher004 | password | Teacher4 Singh | Active |
-| 5 | teacher005 | password | Teacher5 Singh | Active |
+| # | Username | Password | Name | Status | Features |
+|---|----------|----------|------|--------|----------|
+| 1 | teacher001 | password | Teacher1 Singh | Active | Dashboard + My Attendance |
+| 2 | teacher002 | password | Teacher2 Singh | Active | Dashboard + My Attendance |
+| 3 | teacher003 | password | Teacher3 Singh | Active | Dashboard + My Attendance |
+| 4 | teacher004 | password | Teacher4 Singh | Active | Dashboard + My Attendance |
+| 5 | teacher005 | password | Teacher5 Singh | Active | Dashboard + My Attendance |
 
 ### Teacher Details:
 - **Employee IDs:** EMP0001 to EMP0005
@@ -52,6 +75,21 @@
 - **Joining Date:** 2020-04-01
 - **Email Pattern:** teacher{n}@school.com
 - **Phone Pattern:** 87654321{n}
+
+### Teacher Features:
+- **Dashboard**: Personal information and statistics
+- **My Attendance**: View own attendance records (read-only)
+  - Monthly attendance summary
+  - Present/Absent/Late statistics
+  - Working hours tracking
+  - Attendance percentage
+- **My Students**: View assigned students
+- **My Subjects**: View teaching subjects
+- **Grade Book**: Manage student grades
+
+### Teacher URLs:
+- **Dashboard**: http://127.0.0.1:8000/teacher/dashboard
+- **My Attendance**: http://127.0.0.1:8000/teacher/my-attendance
 
 ---
 

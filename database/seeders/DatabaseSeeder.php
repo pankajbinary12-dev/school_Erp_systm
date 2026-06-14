@@ -13,6 +13,8 @@ use App\Models\Teacher;
 use App\Models\Admin;
 use App\Models\User;
 use App\Models\StaffMember;
+use App\Models\BookCategory;
+use App\Models\Book;
 
 class DatabaseSeeder extends Seeder
 {
@@ -173,6 +175,38 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
+        // Create Book Categories
+        $categories = [
+            ['category_name' => 'Science Fiction', 'description' => 'Science fiction books', 'status' => 'Active'],
+            ['category_name' => 'Mathematics', 'description' => 'Mathematics textbooks', 'status' => 'Active'],
+            ['category_name' => 'History', 'description' => 'History books', 'status' => 'Active'],
+            ['category_name' => 'Literature', 'description' => 'Literature and novels', 'status' => 'Active'],
+            ['category_name' => 'Reference', 'description' => 'Reference books', 'status' => 'Active'],
+        ];
+
+        $categoryModels = [];
+        foreach ($categories as $cat) {
+            $categoryModels[] = BookCategory::create($cat);
+        }
+
+        // Create Sample Books
+        $books = [
+            ['book_no' => 'BK001', 'title' => 'Introduction to Physics', 'author' => 'Dr. John Smith', 'category_id' => 1, 'quantity' => 5, 'available_quantity' => 5, 'price' => 450.00, 'rack_no' => 'A1', 'status' => 'Available'],
+            ['book_no' => 'BK002', 'title' => 'Advanced Mathematics', 'author' => 'Prof. Sarah Johnson', 'category_id' => 2, 'quantity' => 8, 'available_quantity' => 8, 'price' => 550.00, 'rack_no' => 'B2', 'status' => 'Available'],
+            ['book_no' => 'BK003', 'title' => 'World History', 'author' => 'Michael Brown', 'category_id' => 3, 'quantity' => 6, 'available_quantity' => 6, 'price' => 400.00, 'rack_no' => 'C3', 'status' => 'Available'],
+            ['book_no' => 'BK004', 'title' => 'English Literature', 'author' => 'Emily Davis', 'category_id' => 4, 'quantity' => 10, 'available_quantity' => 10, 'price' => 350.00, 'rack_no' => 'D4', 'status' => 'Available'],
+            ['book_no' => 'BK005', 'title' => 'Chemistry Basics', 'author' => 'Dr. Robert Wilson', 'category_id' => 1, 'quantity' => 7, 'available_quantity' => 7, 'price' => 500.00, 'rack_no' => 'A2', 'status' => 'Available'],
+            ['book_no' => 'BK006', 'title' => 'Calculus Made Easy', 'author' => 'Prof. Linda Martinez', 'category_id' => 2, 'quantity' => 5, 'available_quantity' => 5, 'price' => 480.00, 'rack_no' => 'B3', 'status' => 'Available'],
+            ['book_no' => 'BK007', 'title' => 'Ancient Civilizations', 'author' => 'James Anderson', 'category_id' => 3, 'quantity' => 4, 'available_quantity' => 4, 'price' => 420.00, 'rack_no' => 'C4', 'status' => 'Available'],
+            ['book_no' => 'BK008', 'title' => 'Poetry Collection', 'author' => 'Various Authors', 'category_id' => 4, 'quantity' => 12, 'available_quantity' => 12, 'price' => 300.00, 'rack_no' => 'D5', 'status' => 'Available'],
+            ['book_no' => 'BK009', 'title' => 'Encyclopedia', 'author' => 'Editorial Team', 'category_id' => 5, 'quantity' => 3, 'available_quantity' => 3, 'price' => 1200.00, 'rack_no' => 'E1', 'status' => 'Available'],
+            ['book_no' => 'BK010', 'title' => 'Dictionary', 'author' => 'Oxford Press', 'category_id' => 5, 'quantity' => 15, 'available_quantity' => 15, 'price' => 250.00, 'rack_no' => 'E2', 'status' => 'Available'],
+        ];
+
+        foreach ($books as $book) {
+            Book::create($book);
+        }
+
         echo "\n✅ Database seeded successfully!\n";
         echo "📚 Created:\n";
         echo "   - 1 Default User\n";
@@ -183,7 +217,9 @@ class DatabaseSeeder extends Seeder
         echo "   - 10 Subjects\n";
         echo "   - 10 Students\n";
         echo "   - 5 Teachers\n";
-        echo "   - 5 Staff Members\n\n";
+        echo "   - 5 Staff Members\n";
+        echo "   - 5 Book Categories\n";
+        echo "   - 10 Books\n\n";
         echo "🔐 Login Credentials:\n";
         echo "   User: email = user@school.com, password = password\n";
         echo "   Admin: username = admin, password = admin123\n";

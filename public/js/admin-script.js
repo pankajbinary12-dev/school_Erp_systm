@@ -13,11 +13,18 @@
         // MOBILE MENU TOGGLE
         // ============================================
         const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-        const menuContainer = document.querySelector('.menu-container');
+        const horizontalMenu = document.querySelector('.horizontal-menu');
         
-        if (mobileMenuToggle && menuContainer) {
-            mobileMenuToggle.addEventListener('click', function() {
-                menuContainer.classList.toggle('mobile-menu-active');
+        console.log('Mobile Menu Toggle:', mobileMenuToggle);
+        console.log('Horizontal Menu:', horizontalMenu);
+        
+        if (mobileMenuToggle && horizontalMenu) {
+            mobileMenuToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('Menu toggle clicked!');
+                horizontalMenu.classList.toggle('mobile-menu-active');
                 
                 // Toggle icon
                 const icon = this.querySelector('i');
@@ -25,9 +32,11 @@
                     if (icon.classList.contains('fa-bars')) {
                         icon.classList.remove('fa-bars');
                         icon.classList.add('fa-times');
+                        console.log('Changed to X icon');
                     } else {
                         icon.classList.remove('fa-times');
                         icon.classList.add('fa-bars');
+                        console.log('Changed to bars icon');
                     }
                 }
             });
@@ -36,7 +45,7 @@
             document.addEventListener('click', function(event) {
                 if (!event.target.closest('.horizontal-menu') && 
                     !event.target.closest('.mobile-menu-toggle')) {
-                    menuContainer.classList.remove('mobile-menu-active');
+                    horizontalMenu.classList.remove('mobile-menu-active');
                     const icon = mobileMenuToggle.querySelector('i');
                     if (icon) {
                         icon.classList.remove('fa-times');
@@ -44,6 +53,8 @@
                     }
                 }
             });
+        } else {
+            console.error('Mobile menu elements not found!');
         }
 
         // ============================================
@@ -202,7 +213,10 @@
             resizeTimer = setTimeout(function() {
                 // Refresh dropdown behavior on resize
                 if (window.innerWidth > 768) {
-                    menuContainer.classList.remove('mobile-menu-active');
+                    const horizontalMenu = document.querySelector('.horizontal-menu');
+                    if (horizontalMenu) {
+                        horizontalMenu.classList.remove('mobile-menu-active');
+                    }
                     const dropdowns = document.querySelectorAll('.dropdown-menu-custom');
                     dropdowns.forEach(function(dropdown) {
                         dropdown.classList.remove('mobile-dropdown-active');

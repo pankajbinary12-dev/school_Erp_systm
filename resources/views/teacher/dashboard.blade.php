@@ -5,27 +5,10 @@
 @section('content')
 <div class="d-flex">
     <!-- Sidebar -->
-    <div class="sidebar" style="width: 250px;">
-        <div class="p-3 text-center border-bottom">
-            <i class="fas fa-chalkboard-teacher fa-3x text-white mb-2"></i>
-            <h5 class="text-white mb-0">{{ $teacher->full_name }}</h5>
-            <small class="text-white-50">{{ $teacher->employee_id }}</small>
-        </div>
-        
-        <nav class="nav flex-column mt-3">
-            <a class="nav-link active" href="#"><i class="fas fa-home"></i> Dashboard</a>
-            <a class="nav-link" href="#"><i class="fas fa-user"></i> My Profile</a>
-            <a class="nav-link" href="#"><i class="fas fa-users"></i> My Students</a>
-            <a class="nav-link" href="#"><i class="fas fa-book"></i> My Subjects</a>
-            <a class="nav-link" href="#"><i class="fas fa-calendar-check"></i> Attendance</a>
-            <a class="nav-link" href="#"><i class="fas fa-file-alt"></i> Assignments</a>
-            <a class="nav-link" href="#"><i class="fas fa-chart-line"></i> Grade Book</a>
-            <a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </nav>
-    </div>
+    @include('teacher.partials.sidebar')
 
     <!-- Main Content -->
-    <div class="main-content flex-grow-1">
+    <div class="main-content flex-grow-1" style="margin-left: 250px;">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
@@ -37,8 +20,8 @@
                             <i class="fas fa-user-circle"></i> {{ $teacher->first_name }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><a class="dropdown-item" href="{{ route('teacher.profile') }}"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ route('teacher.my.attendance') }}"><i class="fas fa-cog"></i> My Attendance</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#" id="logoutBtn2"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                         </ul>
